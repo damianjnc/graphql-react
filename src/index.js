@@ -12,6 +12,8 @@ import { store, persistor } from './redux/store'
 
 import './index.css'
 import App from './App'
+// eslint-disable-next-line no-unused-vars
+import { resolvers, typeDefs } from './graphql/resolvers'
 
 const httpLink = createHttpLink({
   uri: 'https://crwn-clothing.com'
@@ -21,18 +23,26 @@ const cache = new InMemoryCache()
 
 const client = new ApolloClient({
   link: httpLink,
-  cache
+  cache,
+  typeDefs,
+  resolvers
+})
+
+client.writeData({
+  data: {
+    cartHidden: true
+  }
 })
 
 ReactDOM.render(
-  <ApolloProvider client={client}>
-    <Provider store={store}>
-      <BrowserRouter>
-        <PersistGate persistor={persistor}>
-          <App />
-        </PersistGate>
-      </BrowserRouter>
-    </Provider>
-  </ApolloProvider>,
-  document.getElementById('root')
+    <ApolloProvider client={client}>
+      <Provider store={store}>
+        <BrowserRouter>
+          <PersistGate persistor={persistor}>
+            <App />
+          </PersistGate>
+        </BrowserRouter>
+      </Provider>
+    </ApolloProvider>,
+    document.getElementById('root')
 )
